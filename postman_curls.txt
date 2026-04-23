@@ -41,6 +41,10 @@ curl --location --request POST 'http://localhost:8080/api/sensors' \
     "currentValue": 0.0
 }'
 
+# 6b. Delete a Sensor
+# Replace {sensorId} with an actual sensor ID
+curl --location --request DELETE 'http://localhost:8080/api/sensors/{sensorId}'
+
 
 ### SENSOR READINGS ###
 
@@ -54,4 +58,112 @@ curl --location --request POST 'http://localhost:8080/api/sensors/{sensorId}/rea
 --header 'Content-Type: application/json' \
 --data-raw '{
     "value": 24.5
+}'
+
+### ADDITIONAL EXAMPLES FROM COLLEAGUE ###
+
+# Create Active Sensor
+curl --location --request POST 'http://localhost:8080/api/sensors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "roomId": "{roomId}",
+    "type": "TEMPERATURE",
+    "status": "ACTIVE",
+    "currentValue": 0.0
+}'
+
+# Create Maintenance Sensor
+curl --location --request POST 'http://localhost:8080/api/sensors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "roomId": "{roomId}",
+    "type": "CO2",
+    "status": "MAINTENANCE",
+    "currentValue": 0.0
+}'
+
+# Create Sensor With Missing Room (HTTP 422 Unprocessable Entity vs Null Room ID)
+# Note: As per LinkedResourceNotFoundExceptionMapper (Q7), creating a sensor with a non-existent room ID is a missing reference and should return 422 Unprocessable Entity. However, testing shows it might create a sensor with a null room ID depending on the exact implementation handling.
+curl --location --request POST 'http://localhost:8080/api/sensors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "roomId": "non-existent-room-id",
+    "type": "TEMPERATURE",
+    "status": "ACTIVE"
+}'
+
+# Wrong Content Type Demo (HTTP 415 Unsupported Media Type)
+# Note: As per Question 3.1, sending text/plain when the server consumes application/json should return a 415 error, automatically handled by JAX-RS.
+curl --location --request POST 'http://localhost:8080/api/rooms' \
+--header 'Content-Type: text/plain' \
+--data-raw '{"name": "Room A"}'
+
+# List Sensors
+curl --location --request GET 'http://localhost:8080/api/sensors'
+
+# Filter Sensors Temperature
+curl --location --request GET 'http://localhost:8080/api/sensors?type=TEMPERATURE'
+
+# Filter Sensors CO2
+curl --location --request GET 'http://localhost:8080/api/sensors?type=CO2'
+
+# Get Empty Reading History
+curl --location --request GET 'http://localhost:8080/api/sensors/{newSensorId}/readings'
+
+# Create Reading For Active Sensor
+curl --location --request POST 'http://localhost:8080/api/sensors/{activeSensorId}/readings' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "value": 24.5
+}'
+
+# Get Parent Sensor After Reading
+curl --location --request GET 'http://localhost:8080/api/sensors/{activeSensorId}'
+
+# Get Reading History After Insert
+curl --location --request GET 'http://localhost:8080/api/sensors/{activeSensorId}/readings'
+
+# Get Single Reading
+curl --location --request GET 'http://localhost:8080/api/sensors/{activeSensorId}/readings/{readingId}'
+
+# Post Reading To Maintenance Sensor (Testing SensorUnavailableException)
+# Note: Should throw a SensorUnavailableException (400 or 409) because the sensor is not in an ACTIVE state.
+curl --location --request POST 'http://localhost:8080/api/sensors/{maintenanceSensorId}/readings' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "value": 30.0
+}'
+
+# Delete Room That Still Has Sensors (Testing constraints/cascading)
+# Note: Might return an error if deleting a room with active sensors violates business logic.
+curl --location --request DELETE 'http://localhost:8080/api/rooms/{roomIdWithSensors}'
+
+# Global 500 Demo (Testing GenericExceptionMapper)
+# Note: As per Question 6, this tests if the GenericExceptionMapper properly hides the raw Java stack trace when an unexpected error (like invalid JSON syntax) occurs.
+curl --location --request POST 'http://localhost:8080/api/rooms' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name": "Bad Room", "capacity": '
+
+### MORE EDGE CASES AND ERROR TESTS ###
+
+# DELETE Idempotency Demo (HTTP 204 or 404)
+# Note: As per Question 2.2, sending the exact same DELETE request multiple times should yield the same structural system state. The second request might return a 404 Not Found or a 204 No Content.
+curl --location --request DELETE 'http://localhost:8080/api/rooms/{deletedRoomId}'
+
+# Get Non-Existent Room (HTTP 404 Not Found)
+curl --location --request GET 'http://localhost:8080/api/rooms/invalid-id-123'
+
+# Create Room With Negative Capacity (Testing Validation)
+curl --location --request POST 'http://localhost:8080/api/rooms' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Invalid Room",
+    "capacity": -10
+}'
+
+# Post Reading to Non-Existent Sensor (HTTP 404)
+curl --location --request POST 'http://localhost:8080/api/sensors/non-existent-sensor/readings' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "value": 15.0
 }'

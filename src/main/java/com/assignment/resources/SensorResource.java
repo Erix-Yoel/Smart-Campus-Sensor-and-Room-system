@@ -62,4 +62,21 @@ public class SensorResource {
         }
         return new SensorReadingResource(parentSensor);
     }
+
+    @DELETE
+    @Path("/{sensorId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteSensor(@PathParam("sensorId") String sensorId) {
+        LOGGER.info("Deleting sensor with ID: " + sensorId);
+        Sensor sensor = store.getSensors().get(sensorId);
+        if (sensor == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse<>("Sensor not found", null))
+                    .build();
+        }
+
+        store.getSensors().remove(sensorId);
+        store.getReadings().remove(sensorId);
+        return Response.ok(new ApiResponse<>("Sensor deleted successfully", null)).build();
+    }
 }
