@@ -2,12 +2,6 @@
 
 Welcome to the documentation for the JAX-RS REST Service. This guide breaks down the core design decisions, RESTful semantics, and JAX-RS mechanics implemented in this project.
 
-## 📑 Table of Contents
-1. [Architecture & Design Patterns](#architecture--design-patterns)
-2. [REST Principles & Routing](#rest-principles--routing)
-3. [Payload Management & Content Negotiation](#payload-management--content-negotiation)
-4. [Resource Lifecycle & Concurrency](#resource-lifecycle--concurrency)
-5. [Error Handling & Security](#error-handling--security)
 
 ---
 
