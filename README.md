@@ -82,3 +82,5 @@ This significantly accelerates reconnaissance for an attacker, allowing them to 
 HTTP 404 Not Found specifically means that the Request URI itself does not point to an existing resource on the server. If the client POSTs to `/api/v1/sensors`, the URI is perfectly valid and found. 
 The issue is that the JSON payload contains a reference (`roomId`) to an entity that doesn't exist. The JSON itself is well-formed (not a 400 Bad Request syntax error), but the server cannot process the instructions because of unprocessable semantic errors within the payload (a dangling foreign key). 
 Therefore, 422 Unprocessable Entity accurately reflects that the server understands the content-type and syntax, but intrinsically cannot process the contained instructions.
+#   S m a r t - C a m p u s - S e n s o r - a n d - R o o m - s y s t e m  
+ 
