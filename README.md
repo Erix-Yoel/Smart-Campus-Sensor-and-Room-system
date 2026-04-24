@@ -1,11 +1,11 @@
-# 🚀 JAX-RS REST Service: Architecture & Implementation Guide
+# JAX-RS REST Service: Architecture & Implementation Guide
 
 Welcome to the documentation for the JAX-RS REST Service. This guide breaks down the core design decisions, RESTful semantics, and JAX-RS mechanics implemented in this project.
 
 
 ---
 
-## 🏗️ Architecture & Design Patterns
+##  Architecture & Design Patterns
 
 ### Managing Cross-Cutting Concerns (Logging)
 
@@ -21,7 +21,7 @@ Welcome to the documentation for the JAX-RS REST Service. This guide breaks down
 
 ---
 
-## 🌐 REST Principles & Routing
+##  REST Principles & Routing
 
 ### Hypermedia and HATEOAS
 
@@ -43,7 +43,7 @@ Welcome to the documentation for the JAX-RS REST Service. This guide breaks down
 
 ---
 
-## 📦 Payload Management & Content Negotiation
+## Payload Management & Content Negotiation
 
 ### Payload Optimization
 
@@ -71,7 +71,7 @@ Welcome to the documentation for the JAX-RS REST Service. This guide breaks down
 
 ---
 
-## 🛡️ Error Handling & Security
+## Error Handling & Security
 
 ### Cybersecurity and Stack Traces
 
